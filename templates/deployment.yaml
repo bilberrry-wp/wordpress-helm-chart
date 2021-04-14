@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.app.name }}
+  namespace: {{ .Values.app.group }}
+  labels:
+    app: {{ .Values.app.name }}
+    group: {{ .Values.app.group }}
+spec:
+  replicas: {{ .Values.app.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.app.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.app.name }}
+        group: {{ .Values.app.group }}
+        date: "{{ now | unixEpoch }}"
+    spec:
+      {{ if .Values.app.initJob }}
+      initContainers:
+        - name: {{ .Values.app.name }}-init
+          image: "groundnuty/k8s-wait-for:1.3"
+          imagePullPolicy: Always
+          args:
+            - "job"
+            - "{{ .Values.app.name }}-cli-{{ .Release.Revision }}"
+      {{end}}
+
+      containers:
+        - name: {{ .Values.app.name }}
+          image: {{ .Values.app.container.image }}:{{ .Values.app.container.tag }}
+          imagePullPolicy: Always
+
+          {{ if .Values.app.container.command }}
+          command: ["/bin/sh", "-c"]
+          args: {{ .Values.app.container.command }}
+          {{end}}
+
+          resources:
+            requests:
+              memory: {{ .Values.app.container.resources.requests.memory }}
+              cpu: {{ .Values.app.container.resources.requests.cpu }}
+            limits:
+              memory: {{ .Values.app.container.resources.limits.memory }}
+              cpu: {{ .Values.app.container.resources.limits.cpu }}
+          ports:
+            - containerPort: {{ .Values.app.service.targetPort }}
+          envFrom:
+            {{ if .Values.app.config }}
+            - configMapRef:
+                name: {{ .Values.app.name }}-config
+            {{end}}
+
+            {{ if .Values.app.container.hasSecrets }}
+            - secretRef:
+                name: {{ .Values.app.name }}-secret
+            {{end}}
+
+          {{ if .Values.app.container.env }}
+          env:
+            {{- range $key, $value :=  .Values.app.container.env}}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end}}
+          {{end}}

@@ -1,0 +1,47 @@
+{{ if .Values.app.initJob }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Values.app.name }}-cli-{{ .Release.Revision }}
+  namespace: {{ .Values.app.group }}
+  labels:
+    app: {{ .Values.app.name }}
+    group: {{ .Values.app.group }}
+spec:
+  backoffLimit: 0
+  ttlSecondsAfterFinished: 300
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.app.name }}-cli
+        group: {{ .Values.app.group }}
+        date: "{{ now | unixEpoch }}"
+    spec:
+      containers:
+        - name: {{ .Values.app.name }}-cli
+          image: {{ .Values.app.container.image }}:{{ .Values.app.container.tag }}
+          imagePullPolicy: Always
+
+          command: ["/bin/sh","-c"]
+          args: {{ .Values.app.initJob }}
+
+          envFrom:
+            {{ if .Values.app.config }}
+            - configMapRef:
+                name: {{ .Values.app.name }}-config
+            {{end}}
+
+            {{ if .Values.app.container.hasSecrets }}
+            - secretRef:
+                name: {{ .Values.app.name }}-secret
+            {{end}}
+
+            {{ if .Values.app.container.env }}
+            env:
+              {{- range $key, $value := .Values.app.container.env}}
+              - name: {{ $key }}
+                value: {{ $value | quote }}
+              {{- end}}
+            {{end}}
+      restartPolicy: Never
+  {{end}}
