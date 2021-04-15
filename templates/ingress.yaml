@@ -23,7 +23,7 @@ spec:
   {{ if .Values.app.ingress.tls }}
   tls:
     - hosts: {{ .Values.app.ingress.tlsDomains }}
-      secretName: {{ .Values.app.ingress.name }}-tls
+      secretName: {{ .Values.app.name }}-tls
   {{end}}
   rules:
   {{- range .Values.app.ingress.hosts }}
