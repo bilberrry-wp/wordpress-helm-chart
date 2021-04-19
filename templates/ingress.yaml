@@ -24,7 +24,6 @@ metadata:
       if ($request_method = GET) {
           rewrite ^([^.?]*[^/])$ $1/ redirect;
       }
-      add_header X-App-Version ${IMAGE_TAG};
 spec:
   {{ if .Values.app.ingress.tls }}
   tls:
