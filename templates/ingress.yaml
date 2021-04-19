@@ -21,7 +21,10 @@ metadata:
     {{end}}
 
     nginx.ingress.kubernetes.io/configuration-snippet: |
-      rewrite ^([^.?]*[^/])$ $1/ redirect;
+      if ($request_method = GET) {
+          rewrite ^([^.?]*[^/])$ $1/ redirect;
+      }
+      add_header X-App-Version ${IMAGE_TAG};
 spec:
   {{ if .Values.app.ingress.tls }}
   tls:
