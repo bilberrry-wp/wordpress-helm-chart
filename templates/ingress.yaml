@@ -8,9 +8,12 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-body-size: "32m"
     nginx.ingress.kubernetes.io/client-body-buffer-size: "4m"
     nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
+    nginx.ingress.kubernetes.io/enable-cors: "false"
+
     {{ if .Values.app.ingress.tls }}
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     {{end}}
+
     service.beta.kubernetes.io/do-loadbalancer-name: "wp-test-lb"
     service.beta.kubernetes.io/do-loadbalancer-enable-proxy-protocol: "true"
 
