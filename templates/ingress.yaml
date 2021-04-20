@@ -9,9 +9,7 @@ metadata:
     nginx.ingress.kubernetes.io/client-body-buffer-size: "4m"
     nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
 
-    {{ if .Values.app.ingress.tls }}
-    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-    {{end}}
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
 
     service.beta.kubernetes.io/do-loadbalancer-name: "wp-test-lb"
     service.beta.kubernetes.io/do-loadbalancer-enable-proxy-protocol: "true"
