@@ -29,7 +29,10 @@ metadata:
 spec:
   {{ if .Values.app.ingress.tls }}
   tls:
-    - hosts: {{ .Values.app.ingress.tlsDomains }}
+    - hosts:
+      {{- range .Values.app.ingress.tlsDomains }}
+      - {{ . | quote }}
+      {{- end }}
       secretName: {{ .Values.app.name }}-tls
   {{end}}
   rules:
