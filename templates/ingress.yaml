@@ -10,6 +10,8 @@ metadata:
     nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
     nginx.ingress.kubernetes.io/enable-cors: "false"
 
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+
     service.beta.kubernetes.io/do-loadbalancer-name: "wp-test-lb"
     service.beta.kubernetes.io/do-loadbalancer-enable-proxy-protocol: "true"
 
