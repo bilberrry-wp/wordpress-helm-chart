@@ -33,7 +33,7 @@ spec:
       {{- range .Values.app.ingress.tlsDomains }}
       - {{ . | quote }}
       {{- end }}
-      secretName: {{ .Values.app.name }}-tls
+      secretName: {{ .Values.app.name }}-cert
   {{end}}
   rules:
   {{- range .Values.app.ingress.hosts }}
